@@ -1,0 +1,29 @@
+--- UPDATE FROM UPSTREAM ----
+
+1. git remote add upstream https://github.com/snipersim/snipersim.git
+2. git pull --rebase upstream main
+3. git rebase --skip
+4. git push --force-with-lease origin main
+
+Tutorial: https://gist.github.com/seLain/8bdf12c7196f3fccafdf067dec2696b2
+
+
+--- MERGE MULTIPLE COMMITS INTO ONE ---
+
+1. git rebase --interactive HEAD~<N>
+2. Use 'squash' option to merge
+3. git log (to check the result)
+4. git push --force (to push to GitHub repository)
+
+Tutorial: https://youtu.be/UO2RFLAId7Y
+
+
+--- FIX PREVIOUS COMMIT ---
+
+1. git log (to list commits)
+2. git add .
+3. git commit --fixup <commit>
+4. git rebase -i --autosquash <prev_commit>
+5. git push --force (to push to GitHub repository)
+
+Tutorial: https://youtu.be/xpYUiE2OqQM
