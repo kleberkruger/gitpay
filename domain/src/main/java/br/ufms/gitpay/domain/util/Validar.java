@@ -1,7 +1,6 @@
 package br.ufms.gitpay.domain.util;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -29,15 +28,15 @@ public class Validar {
      * @throws IllegalArgumentException caso o nome da pessoa seja inválido
      */
     public static String nomePessoa(String nome, boolean completo) {
-        return new Validacao("Nome", nome)
-                .validarNulo(true)
+        return new ValidacaoString("Nome", nome)
+                .validarNuloEmBranco(true)
                 .validarPorExpressao("^[a-zA-ZÀ-ÖØ-öø-ÿ -]+$", "Caracteres não permitidos")
                 .validarTamanho(3, 50)
-                .validar(valor -> {
-                    if (completo && valor.split(" ").length < 2) {
+                .validar(valor -> valor.ifPresent(nomeCompleto -> {
+                    if (completo && nomeCompleto.split(" ").length < 2) {
                         throw new IllegalArgumentException("Nome incompleto. Informe o sobrenome");
                     }
-                }).getValor();
+                })).getValor();
     }
 
     /**
@@ -48,8 +47,8 @@ public class Validar {
      * @throws IllegalArgumentException caso o nome da empresa seja inválido
      */
     public static String nomeEmpresa(String nome) {
-        return new Validacao("Nome", nome)
-                .validarNulo(true)
+        return new ValidacaoString("Nome", nome)
+                .validarNuloEmBranco(true)
                 .validarTamanho(1, 50)
                 .getValor();
     }
@@ -74,8 +73,8 @@ public class Validar {
      * @throws IllegalArgumentException caso a razão social seja inválida
      */
     public static String razaoSocial(String razaoSocial, boolean obrigatorio) {
-        return new Validacao("Razão social", razaoSocial)
-                .validarNulo(obrigatorio)
+        return new ValidacaoString("Razão social", razaoSocial)
+                .validarNuloEmBranco(obrigatorio)
                 .validarTamanho(3, 50)
                 .validarPorExpressao(".*[\\p{L}].*", "Informe ao menos uma letra")
                 .getValor();
@@ -113,8 +112,8 @@ public class Validar {
                 .append("\\+55\\s\\d{2}\\s9\\d{4}-\\d{4}")      // +55 ## 9####-####
                 .toString();
 
-        return new Validacao("Telefone", telefone)
-                .validarNulo(obrigatorio)
+        return new ValidacaoString("Telefone", telefone)
+                .validarNuloEmBranco(obrigatorio)
                 .validarPorExpressao(regex, "Use somente números ou algum formato de telefone brasileiro válido")
                 .getValor(tel -> {
                     tel = tel.replaceAll("\\D", "");
@@ -143,8 +142,8 @@ public class Validar {
      */
     public static String email(String email, boolean obrigatorio) {
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-        return new Validacao("Email", email)
-                .validarNulo(obrigatorio)
+        return new ValidacaoString("Email", email)
+                .validarNuloEmBranco(obrigatorio)
                 .validarTamanho(3, 50)
                 .validarPorExpressao(regex)
                 .getValor();
@@ -159,8 +158,8 @@ public class Validar {
      */
     public static String usuario(String usuario) {
         String regex = "^(?!.*([._])\\1)(?!.*\\.$)(?!^\\.)[a-zA-Z0-9_]+(?:[._][a-zA-Z0-9_]+)*_?$";
-        return new Validacao("Usuário", usuario)
-                .validarNulo(true)
+        return new ValidacaoString("Usuário", usuario)
+                .validarNuloEmBranco(true)
                 .validarTamanho(3, 30)
                 .validarPorExpressao(regex)
                 .getValor();
@@ -186,8 +185,8 @@ public class Validar {
      * @throws IllegalArgumentException caso a senha seja inválida
      */
     public static String senha(String senha, boolean numerica) {
-        return new Validacao("Senha", senha)
-                .validarNulo(true)
+        return new ValidacaoString("Senha", senha)
+                .validarNuloEmBranco(true)
                 .validarTamanho(6, 30)
                 .validarPorExpressao(numerica ? "^\\d+$" : null)
                 .getValor();
@@ -213,7 +212,7 @@ public class Validar {
      * @throws IllegalArgumentException caso a data de nascimento seja inválida
      */
     public static LocalDate dataNascimento(LocalDate data, boolean obrigatorio) {
-        return new ValidacaoBase<>("Data de nascimento", data)
+        return new Validacao<>("Data de nascimento", data)
                 .validarNulo(obrigatorio)
                 .validar(valor -> valor.ifPresent(date -> {
                     if (date.isAfter(LocalDate.now()) || date.isBefore(LocalDate.now().minusYears(150))) {
@@ -269,29 +268,29 @@ public class Validar {
         return codigoBanco(Integer.parseInt(codigo));
     }
 
-    private static class ValidacaoBase<T> {
+    private static class Validacao<T> {
 
         protected final String atributo;
         protected final T valor;
 
-        public ValidacaoBase(String atributo, T valor) {
+        public Validacao(String atributo, T valor) {
             this.atributo = atributo;
             this.valor = valor;
         }
 
-        public ValidacaoBase<T> validarNulo(boolean obrigatorio) {
+        public Validacao<T> validarNulo(boolean obrigatorio) {
             if (valor == null) {
                 throw new IllegalArgumentException(atributo + " com valor nulo");
             }
             return this;
         }
 
-        public ValidacaoBase<T> validar(Consumer<Optional<T>> func) {
+        public Validacao<T> validar(Consumer<Optional<T>> func) {
             if (func != null) func.accept(Optional.ofNullable(valor));
             return this;
         }
 
-        public ValidacaoBase<T> validar(BiConsumer<String, Optional<T>> func) {
+        public Validacao<T> validar(BiConsumer<String, Optional<T>> func) {
             if (func != null) func.accept(atributo, Optional.ofNullable(valor));
             return this;
         }
@@ -305,24 +304,27 @@ public class Validar {
         }
     }
 
-    private static class Validacao {
+    private static class ValidacaoString extends Validacao<String> {
 
-        protected final String atributo;
-        protected final String valor;
-
-        public Validacao(String atributo, String valor) {
-            this.atributo = atributo;
-            this.valor = valor;
+        public ValidacaoString(String atributo, String valor) {
+            super(atributo, valor);
         }
 
-        public Validacao validarNulo(boolean obrigatorio) {
-            if (obrigatorio && (valor == null || valor.isBlank())) {
-                throw new IllegalArgumentException(atributo + (valor == null ? " nulo" : " em branco"));
-            }
-            return this;
+        public ValidacaoString validarNuloEmBranco(boolean obrigatorio) {
+//            super.validarNulo(obrigatorio);
+//            if (obrigatorio && valor.isBlank()) {
+//                throw new IllegalArgumentException(atributo + " em branco");
+//            }
+//            return this;
+
+            return (ValidacaoString) super.validarNulo(obrigatorio).validar(opt -> opt.ifPresent(valor -> {
+                if (obrigatorio && valor.isBlank()) {
+                    throw new IllegalArgumentException(atributo + " em branco");
+                }
+            }));
         }
 
-        public Validacao validarTamanho(int min, int max) {
+        public ValidacaoString validarTamanho(int min, int max) {
             int len = valor != null ? this.valor.trim().length() : 0;
             if (len < min || len > max) {
                 throw new IllegalArgumentException(String.format("%s deve conter %s caracter%s", atributo,
@@ -331,11 +333,11 @@ public class Validar {
             return this;
         }
 
-        public Validacao validarPorExpressao(String regex) {
+        public ValidacaoString validarPorExpressao(String regex) {
             return validarPorExpressao(regex, null);
         }
 
-        public Validacao validarPorExpressao(String regex, String msgErro) {
+        public ValidacaoString validarPorExpressao(String regex, String msgErro) {
             if (regex != null && !valor.matches(regex)) {
                 msgErro = msgErro != null ? "\n" + msgErro.trim() : "";
                 throw new IllegalArgumentException(String.format("%s inválido: [%s]%s", atributo, valor, msgErro));
@@ -343,20 +345,7 @@ public class Validar {
             return this;
         }
 
-        public Validacao validar(Consumer<String> func) {
-            if (func != null) func.accept(valor);
-            return this;
-        }
-
-        public Validacao validar(BiConsumer<String, String> func) {
-            if (func != null) func.accept(atributo, valor);
-            return this;
-        }
-
-        public String getValor() {
-            return getValor(null);
-        }
-
+        @Override
         public String getValor(Function<String, String> func) {
             String valor = this.valor != null ? this.valor.trim() : "";
             return func != null ? func.apply(valor) : valor;
@@ -365,15 +354,6 @@ public class Validar {
 
     public static void main(String[] args) {
         try {
-            // correto
-//        System.out.println(validarNuloTamanhoCaracteres("Razão social", "", 3, 50, null, null, false));
-            // erro: len < min
-//        System.out.println(validarNuloTamanhoCaracteres("Razão social", "ba", 3, 50, null, null, false));
-            // erro: nulo
-//        System.out.println(validarNuloTamanhoCaracteres("Razão social", "", 3, 50, null, null, true));
-            // erro: len < min
-//        System.out.println(validarNuloTamanhoCaracteres("Razão social", "ba", 3, 50, null, null, true));
-
             System.out.println(Validar.telefone("6732914816"));
             System.out.println(Validar.telefone("67996122809"));
             System.out.println(Validar.telefone("(67) 3291-4816"));
