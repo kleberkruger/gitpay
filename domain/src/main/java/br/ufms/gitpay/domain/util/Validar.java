@@ -1,10 +1,6 @@
 package br.ufms.gitpay.domain.util;
 
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Validar {
 
@@ -100,9 +96,6 @@ public class Validar {
      * @throws IllegalArgumentException caso o número de telefone seja inválido
      */
     public static String telefone(String telefone, boolean obrigatorio) {
-//        String regex = "^(\\+55\\s\\d{2}\\s9\\d{4}-\\d{4}|\\+55\\s\\d{2}\\s[1-8]\\d{3}-\\d{4}|" +
-//                "\\(\\d{2}\\)\\s9\\d{4}-\\d{4}|\\(\\d{2}\\)\\s[1-8]\\d{3}-\\d{4}|\\d{2}9\\d{8}|\\d{2}[1-8]\\d{7})$";
-
         String regex = new StringBuilder()
                 .append("\\d{2}[1-8]\\d{7}|")                   // ##########
                 .append("\\d{2}9\\d{8}|")                       // ##9########
@@ -112,13 +105,12 @@ public class Validar {
                 .append("\\+55\\s\\d{2}\\s9\\d{4}-\\d{4}")      // +55 ## 9####-####
                 .toString();
 
-        return new ValidacaoString("Telefone", telefone)
-                .validarNuloEmBranco(obrigatorio)
+        return new ValidacaoString("Telefone", telefone, tel -> {
+            tel = tel.replaceAll("\\D", "");
+            return tel.substring(tel.length() > 11 ? 2 : 0);
+        }).validarNuloEmBranco(obrigatorio)
                 .validarPorExpressao(regex, "Use somente números ou algum formato de telefone brasileiro válido")
-                .getValor(tel -> {
-                    tel = tel.replaceAll("\\D", "");
-                    return tel.substring(tel.length() > 11 ? 2 : 0);
-                });
+                .getValor();
     }
 
     /**
@@ -229,10 +221,41 @@ public class Validar {
      * @throws IllegalArgumentException caso o CPF seja inválido
      */
     public static String cpf(String cpf) {
-//        cpf = validarNuloFormato("CPF", cpf, "\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", true)
-//                .replaceAll("\\D", "");
-//        return cpf;
-        return null;
+        return new ValidacaoString("CPF", cpf, v -> v.replaceAll("\\D", ""))
+                .validarNuloEmBranco(true)
+                .validarPorExpressao("\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")
+                .validarValor(Validar::validarCPF)
+                .getValor();
+    }
+
+    private static void validarCPF(String cpf) {
+        System.out.println("validando CPF: " + cpf);
+
+        int[] digitos = cpf.chars().map(Character::getNumericValue).toArray();
+
+        int soma = 0;
+        for (int i = 0; i < 9; i++) {
+            soma += digitos[i] * (10 - i);
+        }
+
+        int resto = soma % 11;
+        int digitoVerificador1 = (resto < 2) ? 0 : 11 - resto;
+
+        if (digitos[9] != digitoVerificador1) {
+            throw new IllegalArgumentException("CPF inválido: " + cpf);
+        }
+
+        soma = 0;
+        for (int i = 0; i < 10; i++) {
+            soma += digitos[i] * (11 - i);
+        }
+
+        resto = soma % 11;
+        int digitoVerificador2 = (resto < 2) ? 0 : 11 - resto;
+
+        if (digitos[10] != digitoVerificador2) {
+            throw new IllegalArgumentException("CPF inválido");
+        }
     }
 
     /**
@@ -243,7 +266,41 @@ public class Validar {
      * @throws IllegalArgumentException caso o CNPJ seja inválido
      */
     public static String cnpj(String cnpj) {
-        return null;
+        return new ValidacaoString("CPF", cnpj, v -> v.replaceAll("\\D", ""))
+                .validarNuloEmBranco(true)
+                .validarPorExpressao("\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")
+                .validarValor(Validar::validarCNPJ)
+                .getValor();
+    }
+
+    private static void validarCNPJ(String cnpj) {
+        int[] digitos = cnpj.chars().map(Character::getNumericValue).toArray();
+
+        int soma = 0;
+        int peso = 2;
+        for (int i = 11; i >= 0; i--) {
+            soma += digitos[i] * peso;
+            peso++;
+            if (peso == 10) peso = 2;
+        }
+
+        int digitoVerificador1 = (soma % 11 < 2) ? 0 : 11 - (soma % 11);
+        if (digitos[12] != digitoVerificador1) {
+            throw new IllegalArgumentException("CNPJ inválido: " + cnpj);
+        }
+
+        soma = 0;
+        peso = 2;
+        for (int i = 12; i >= 0; i--) {
+            soma += digitos[i] * peso;
+            peso++;
+            if (peso == 10) peso = 2;
+        }
+
+        int digitoVerificador2 = (soma % 11 < 2) ? 0 : 11 - (soma % 11);
+        if (digitos[13] != digitoVerificador2) {
+            throw new IllegalArgumentException("CNPJ inválido");
+        }
     }
 
     /**
@@ -268,90 +325,6 @@ public class Validar {
         return codigoBanco(Integer.parseInt(codigo));
     }
 
-    private static class Validacao<T> {
-
-        protected final String atributo;
-        protected final T valor;
-
-        public Validacao(String atributo, T valor) {
-            this.atributo = atributo;
-            this.valor = valor;
-        }
-
-        public Validacao<T> validarNulo(boolean obrigatorio) {
-            if (valor == null) {
-                throw new IllegalArgumentException(atributo + " com valor nulo");
-            }
-            return this;
-        }
-
-        public Validacao<T> validar(Consumer<Optional<T>> func) {
-            if (func != null) func.accept(Optional.ofNullable(valor));
-            return this;
-        }
-
-        public Validacao<T> validar(BiConsumer<String, Optional<T>> func) {
-            if (func != null) func.accept(atributo, Optional.ofNullable(valor));
-            return this;
-        }
-
-        public T getValor() {
-            return getValor(null);
-        }
-
-        public T getValor(Function<T, T> func) {
-            return func != null ? func.apply(valor) : valor;
-        }
-    }
-
-    private static class ValidacaoString extends Validacao<String> {
-
-        public ValidacaoString(String atributo, String valor) {
-            super(atributo, valor);
-        }
-
-        public ValidacaoString validarNuloEmBranco(boolean obrigatorio) {
-//            super.validarNulo(obrigatorio);
-//            if (obrigatorio && valor.isBlank()) {
-//                throw new IllegalArgumentException(atributo + " em branco");
-//            }
-//            return this;
-
-            return (ValidacaoString) super.validarNulo(obrigatorio).validar(opt -> opt.ifPresent(valor -> {
-                if (obrigatorio && valor.isBlank()) {
-                    throw new IllegalArgumentException(atributo + " em branco");
-                }
-            }));
-        }
-
-        public ValidacaoString validarTamanho(int min, int max) {
-            int len = valor != null ? this.valor.trim().length() : 0;
-            if (len < min || len > max) {
-                throw new IllegalArgumentException(String.format("%s deve conter %s caracter%s", atributo,
-                        min < max ? "entre " + min + " e " + max : max, max > 1 ? "es" : ""));
-            }
-            return this;
-        }
-
-        public ValidacaoString validarPorExpressao(String regex) {
-            return validarPorExpressao(regex, null);
-        }
-
-        public ValidacaoString validarPorExpressao(String regex, String msgErro) {
-            if (regex != null && !valor.matches(regex)) {
-                msgErro = msgErro != null ? "\n" + msgErro.trim() : "";
-                throw new IllegalArgumentException(String.format("%s inválido: [%s]%s", atributo, valor, msgErro));
-            }
-            return this;
-        }
-
-        @Override
-        public String getValor(Function<String, String> func) {
-            String valor = this.valor != null ? this.valor.trim() : "";
-            return func != null ? func.apply(valor) : valor;
-        }
-    }
-
     public static void main(String[] args) {
         try {
             System.out.println(Validar.telefone("6732914816"));
@@ -361,7 +334,8 @@ public class Validar {
             System.out.println(Validar.telefone("+55 67 3291-4816"));
             System.out.println(Validar.telefone("+55 67 99612-2809"));
 
-            dataNascimento(null);
+//            System.out.println(dataNascimento(null));
+            System.out.println(cpf("021.357.301-65"));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
