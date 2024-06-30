@@ -48,7 +48,7 @@ public class ValidacaoTest {
 
     @Test
     public void cpf() {
-        Validar.cpf("02135730165");
+        Validar.cpf("0213573016]5");
     }
 
     @Test

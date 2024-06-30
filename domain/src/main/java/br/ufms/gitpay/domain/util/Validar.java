@@ -333,7 +333,7 @@ public class Validar {
             System.out.println(Validar.telefone("+55 67 99612-2809"));
 
 //            System.out.println(dataNascimento(null));
-            System.out.println(cpf("021.357.301-66"));
+            System.out.println(cpf("021357301-65"));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
