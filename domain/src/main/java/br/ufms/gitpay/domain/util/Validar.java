@@ -28,11 +28,11 @@ public class Validar {
                 .validarNuloEmBranco(true)
                 .validarPorExpressao("^[a-zA-ZÀ-ÖØ-öø-ÿ -]+$", "Caracteres não permitidos")
                 .validarTamanho(3, 50)
-                .validar(valor -> valor.ifPresent(nomeCompleto -> {
+                .validarValor(nomeCompleto -> {
                     if (completo && nomeCompleto.split(" ").length < 2) {
                         throw new IllegalArgumentException("Nome incompleto. Informe o sobrenome");
                     }
-                })).getValor();
+                }).getValor();
     }
 
     /**
@@ -229,8 +229,6 @@ public class Validar {
     }
 
     private static void validarCPF(String cpf) {
-        System.out.println("validando CPF: " + cpf);
-
         int[] digitos = cpf.chars().map(Character::getNumericValue).toArray();
 
         int soma = 0;
@@ -335,7 +333,7 @@ public class Validar {
             System.out.println(Validar.telefone("+55 67 99612-2809"));
 
 //            System.out.println(dataNascimento(null));
-            System.out.println(cpf("021.357.301-65"));
+            System.out.println(cpf("021.357.301-66"));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
