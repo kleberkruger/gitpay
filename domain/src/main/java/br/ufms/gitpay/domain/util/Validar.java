@@ -105,10 +105,8 @@ public class Validar {
                 .append("\\+55\\s\\d{2}\\s9\\d{4}-\\d{4}")      // +55 ## 9####-####
                 .toString();
 
-        return new ValidacaoString("Telefone", telefone, tel -> {
-            tel = tel.replaceAll("\\D", "");
-            return tel.substring(tel.length() > 11 ? 2 : 0);
-        }).validarNuloEmBranco(obrigatorio)
+        return new ValidacaoString("Telefone", telefone, t -> t.replaceAll("\\+55|\\D", ""))
+                .validarNuloEmBranco(obrigatorio)
                 .validarPorExpressao(regex, "Use somente números ou algum formato de telefone brasileiro válido")
                 .getValor();
     }
@@ -325,15 +323,12 @@ public class Validar {
 
     public static void main(String[] args) {
         try {
-            System.out.println(Validar.telefone("6732914816"));
-            System.out.println(Validar.telefone("67996122809"));
-            System.out.println(Validar.telefone("(67) 3291-4816"));
-            System.out.println(Validar.telefone("(67) 99612-2809"));
-            System.out.println(Validar.telefone("+55 67 3291-4816"));
-            System.out.println(Validar.telefone("+55 67 99612-2809"));
-
-//            System.out.println(dataNascimento(null));
-            System.out.println(cpf("021357301-65"));
+            System.out.println(Validar.telefone("5532914816"));
+            System.out.println(Validar.telefone("69996122809"));
+            System.out.println(Validar.telefone("(69) 3291-4816"));
+            System.out.println(Validar.telefone("(69) 99612-2809"));
+            System.out.println(Validar.telefone("+55 55 3291-4816"));
+            System.out.println(Validar.telefone("+55 55 99612-2809"));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());

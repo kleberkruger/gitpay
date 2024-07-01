@@ -27,10 +27,16 @@ class ValidacaoString extends Validacao<String> {
 
     public ValidacaoString validarTamanho(int min, int max) {
         int len = valor != null ? this.valor.trim().length() : 0;
+        // se ele não for obrigatório pode ser 0
         if (len < min || len > max) {
             throw new IllegalArgumentException(String.format("%s deve conter %s caracter%s", atributo,
                     min < max ? "entre " + min + " e " + max : max, max > 1 ? "es" : ""));
         }
+        return this;
+    }
+
+    // ???
+    public ValidacaoString validarTamanho(boolean obrigatorio, int min, int max) {
         return this;
     }
 

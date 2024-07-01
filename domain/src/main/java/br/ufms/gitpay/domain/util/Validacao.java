@@ -1,5 +1,6 @@
 package br.ufms.gitpay.domain.util;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -10,6 +11,8 @@ class Validacao<T> {
     protected final T valor;
 
     public Validacao(String atributo, T valor) {
+        Objects.requireNonNull(atributo, "Nome do atributo nulo");
+
         this.atributo = atributo;
         this.valor = valor;
     }
@@ -20,7 +23,7 @@ class Validacao<T> {
     }
 
     public <V extends Validacao<T>> V validarNulo(boolean obrigatorio) {
-        if (valor == null) {
+        if (obrigatorio && valor == null) {
             throw new IllegalArgumentException(atributo + " com valor nulo");
         }
         return self();
