@@ -24,15 +24,24 @@ public class Validar {
      * @throws IllegalArgumentException caso o nome da pessoa seja inválido
      */
     public static String nomePessoa(String nome, boolean completo) {
-        return new ValidacaoString("Nome", nome)
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("Nome", nome, v -> v.trim().replaceAll("\\s+", " "))
+//                .validarNuloEmBranco(true)
+//                .validarPorExpressao("^[a-zA-ZÀ-ÖØ-öø-ÿ -]+$", "Caracteres não permitidos")
+//                .validarTamanho(3, 50)
+//                .validarValor(nomeCompleto -> {
+//                    if (completo && nomeCompleto.split(" ").length < 2) {
+//                        throw new IllegalArgumentException("Nome incompleto. Informe o sobrenome");
+//                    }
+//                }).getValor();
+
+        return new ValidacaoString2("Nome", nome)
                 .validarPorExpressao("^[a-zA-ZÀ-ÖØ-öø-ÿ -]+$", "Caracteres não permitidos")
                 .validarTamanho(3, 50)
                 .validarValor(nomeCompleto -> {
                     if (completo && nomeCompleto.split(" ").length < 2) {
                         throw new IllegalArgumentException("Nome incompleto. Informe o sobrenome");
                     }
-                }).getValor();
+                }).getValor(v -> v.replaceAll("\\s+", " "));
     }
 
     /**
@@ -43,10 +52,14 @@ public class Validar {
      * @throws IllegalArgumentException caso o nome da empresa seja inválido
      */
     public static String nomeEmpresa(String nome) {
-        return new ValidacaoString("Nome", nome)
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("Nome", nome, v -> v.trim().replaceAll("\\s+", " "))
+//                .validarNuloEmBranco(true)
+//                .validarTamanho(1, 50)
+//                .getValor();
+
+        return new ValidacaoString2("Nome", nome)
                 .validarTamanho(1, 50)
-                .getValor();
+                .getValor(v -> v.replaceAll("\\s+", " "));
     }
 
     /**
@@ -69,11 +82,16 @@ public class Validar {
      * @throws IllegalArgumentException caso a razão social seja inválida
      */
     public static String razaoSocial(String razaoSocial, boolean obrigatorio) {
-        return new ValidacaoString("Razão social", razaoSocial)
-                .validarNuloEmBranco(obrigatorio)
+//        return new ValidacaoString("Razão social", razaoSocial, v -> v.trim().replaceAll("\\s+", " "))
+//                .validarNuloEmBranco(obrigatorio)
+//                .validarTamanho(obrigatorio, 3, 50)
+//                .validarPorExpressao(".*[\\p{L}].*", "Informe ao menos uma letra")
+//                .getValor();
+
+        return new ValidacaoString2("Razão social", razaoSocial, obrigatorio)
                 .validarTamanho(3, 50)
                 .validarPorExpressao(".*[\\p{L}].*", "Informe ao menos uma letra")
-                .getValor();
+                .getValor(v -> v.replaceAll("\\s+", " "));
     }
 
     /**
@@ -105,10 +123,15 @@ public class Validar {
                 .append("\\+55\\s\\d{2}\\s9\\d{4}-\\d{4}")      // +55 ## 9####-####
                 .toString();
 
-        return new ValidacaoString("Telefone", telefone, t -> t.replaceAll("\\+55|\\D", ""))
-                .validarNuloEmBranco(obrigatorio)
+        // .trim()?
+//        return new ValidacaoString("Telefone", telefone, t -> t.replaceAll("\\+55|\\D", ""))
+//                .validarNuloEmBranco(obrigatorio)
+//                .validarPorExpressao(regex, "Use somente números ou algum formato de telefone brasileiro válido")
+//                .getValor();
+
+        return new ValidacaoString2("Telefone", telefone, obrigatorio)
                 .validarPorExpressao(regex, "Use somente números ou algum formato de telefone brasileiro válido")
-                .getValor();
+                .getValor(t -> t.replaceAll("\\+55|\\D", ""));
     }
 
     /**
@@ -132,8 +155,13 @@ public class Validar {
      */
     public static String email(String email, boolean obrigatorio) {
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-        return new ValidacaoString("Email", email)
-                .validarNuloEmBranco(obrigatorio)
+//        return new ValidacaoString("Email", email, v -> v.trim())
+//                .validarNuloEmBranco(obrigatorio)
+//                .validarTamanho(3, 50)
+//                .validarPorExpressao(regex)
+//                .getValor();
+
+        return new ValidacaoString2("Email", email, obrigatorio)
                 .validarTamanho(3, 50)
                 .validarPorExpressao(regex)
                 .getValor();
@@ -148,8 +176,13 @@ public class Validar {
      */
     public static String usuario(String usuario) {
         String regex = "^(?!.*([._])\\1)(?!.*\\.$)(?!^\\.)[a-zA-Z0-9_]+(?:[._][a-zA-Z0-9_]+)*_?$";
-        return new ValidacaoString("Usuário", usuario)
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("Usuário", usuario, v -> v.trim())
+//                .validarNuloEmBranco(true)
+//                .validarTamanho(3, 30)
+//                .validarPorExpressao(regex)
+//                .getValor();
+
+        return new ValidacaoString2("Usuário", usuario)
                 .validarTamanho(3, 30)
                 .validarPorExpressao(regex)
                 .getValor();
@@ -175,8 +208,13 @@ public class Validar {
      * @throws IllegalArgumentException caso a senha seja inválida
      */
     public static String senha(String senha, boolean numerica) {
-        return new ValidacaoString("Senha", senha)
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("Senha", senha)
+//                .validarNuloEmBranco(true)
+//                .validarTamanho(6, 30)
+//                .validarPorExpressao(numerica ? "^\\d+$" : null)
+//                .getValor();
+
+        return new ValidacaoString2("Senha", senha, true, false)
                 .validarTamanho(6, 30)
                 .validarPorExpressao(numerica ? "^\\d+$" : null)
                 .getValor();
@@ -202,8 +240,15 @@ public class Validar {
      * @throws IllegalArgumentException caso a data de nascimento seja inválida
      */
     public static LocalDate dataNascimento(LocalDate data, boolean obrigatorio) {
-        return new Validacao<>("Data de nascimento", data)
-                .validarNulo(obrigatorio)
+//        return new Validacao<>("Data de nascimento", data)
+//                .validarNulo(obrigatorio)
+//                .validar(valor -> valor.ifPresent(date -> {
+//                    if (date.isAfter(LocalDate.now()) || date.isBefore(LocalDate.now().minusYears(150))) {
+//                        throw new IllegalArgumentException("Data de nascimento inválida");
+//                    }
+//                })).getValor();
+
+        return new Validacao2<>("Data de nascimento", data, obrigatorio)
                 .validar(valor -> valor.ifPresent(date -> {
                     if (date.isAfter(LocalDate.now()) || date.isBefore(LocalDate.now().minusYears(150))) {
                         throw new IllegalArgumentException("Data de nascimento inválida");
@@ -219,11 +264,16 @@ public class Validar {
      * @throws IllegalArgumentException caso o CPF seja inválido
      */
     public static String cpf(String cpf) {
-        return new ValidacaoString("CPF", cpf, v -> v.replaceAll("\\D", ""))
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("CPF", cpf, v -> v.replaceAll("\\D", ""))
+//                .validarNuloEmBranco(true)
+//                .validarPorExpressao("\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")
+//                .validarValor(Validar::validarCPF)
+//                .getValor();
+
+        return new ValidacaoString2("CPF", cpf)
                 .validarPorExpressao("\\d{11}|\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")
                 .validarValor(Validar::validarCPF)
-                .getValor();
+                .getValor(v -> v.replaceAll("\\D", ""));
     }
 
     private static void validarCPF(String cpf) {
@@ -262,11 +312,16 @@ public class Validar {
      * @throws IllegalArgumentException caso o CNPJ seja inválido
      */
     public static String cnpj(String cnpj) {
-        return new ValidacaoString("CPF", cnpj, v -> v.replaceAll("\\D", ""))
-                .validarNuloEmBranco(true)
+//        return new ValidacaoString("CNPJ", cnpj, v -> v.replaceAll("\\D", ""))
+//                .validarNuloEmBranco(true)
+//                .validarPorExpressao("\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")
+//                .validarValor(Validar::validarCNPJ)
+//                .getValor();
+
+        return new ValidacaoString2("CNPJ", cnpj)
                 .validarPorExpressao("\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")
                 .validarValor(Validar::validarCNPJ)
-                .getValor();
+                .getValor(v -> v.replaceAll("\\D", ""));
     }
 
     private static void validarCNPJ(String cnpj) {
@@ -307,7 +362,10 @@ public class Validar {
      * @throws IllegalArgumentException caso o código do banco seja inválido
      */
     public static String codigoBanco(int codigo) {
-        return null;
+        if (codigo < 1 || codigo > 999) {
+            throw new IllegalArgumentException("Código do banco inválido: [" + codigo + "]");
+        }
+        return String.format("%03d", codigo);
     }
 
     /**
@@ -318,11 +376,20 @@ public class Validar {
      * @throws IllegalArgumentException caso o código do banco seja inválido
      */
     public static String codigoBanco(String codigo) {
-        return codigoBanco(Integer.parseInt(codigo));
+//        return codigoBanco(Integer.parseInt(new ValidacaoString("Código do banco", codigo)
+//                .validarNuloEmBranco(true)
+//                .validarPorExpressao("^[+-]?\\d+$")
+//                .getValor()));
+
+        return codigoBanco(Integer.parseInt(new ValidacaoString2("Código do banco", codigo)
+                .validarPorExpressao("^[+-]?\\d+$")
+                .getValor()));
     }
 
     public static void main(String[] args) {
         try {
+            System.out.println(Validar.nomePessoa("  kleber   kruger"));
+
             System.out.println(Validar.telefone("5532914816"));
             System.out.println(Validar.telefone("69996122809"));
             System.out.println(Validar.telefone("(69) 3291-4816"));

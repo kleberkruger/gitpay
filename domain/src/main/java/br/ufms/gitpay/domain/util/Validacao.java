@@ -10,15 +10,21 @@ class Validacao<T> {
     protected final String atributo;
     protected final T valor;
 
+//    public Validacao(String atributo, T valor, boolean obrigatorio); ja validar se é obrigatório no início ???
+
     public Validacao(String atributo, T valor) {
         Objects.requireNonNull(atributo, "Nome do atributo nulo");
+
+        if (valor instanceof String val) {
+            System.out.println(atributo + ": " + val.trim().replaceAll("\\s+", " "));
+        }
 
         this.atributo = atributo;
         this.valor = valor;
     }
 
     @SuppressWarnings("unchecked")
-    public <V extends Validacao<T>> V self() {
+    private <V extends Validacao<T>> V self() {
         return (V) this;
     }
 

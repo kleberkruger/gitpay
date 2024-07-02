@@ -10,6 +10,7 @@ class ValidacaoString extends Validacao<String> {
 
     public ValidacaoString(String atributo, String valor) {
         this(atributo, valor, val -> val);
+//        this(atributo, valor, val -> valor.trim().replaceAll("\\s+", " "));
     }
 
     public ValidacaoString(String atributo, String valor, Function<String, String> valueFunction) {
@@ -35,8 +36,12 @@ class ValidacaoString extends Validacao<String> {
         return this;
     }
 
-    // ???
     public ValidacaoString validarTamanho(boolean obrigatorio, int min, int max) {
+        int len = valor != null ? this.valor.trim().length() : 0;
+        if ((obrigatorio || len > 0) && (len < min || len > max)) {
+            throw new IllegalArgumentException(String.format("%s deve conter %s caracter%s", atributo,
+                    min < max ? "entre " + min + " e " + max : max, max > 1 ? "es" : ""));
+        }
         return this;
     }
 
@@ -45,7 +50,7 @@ class ValidacaoString extends Validacao<String> {
     }
 
     public ValidacaoString validarPorExpressao(String regex, String msgErro) {
-        if (regex != null && !valor.matches(regex)) {
+        if (regex != null && valor != null && !valor.matches(regex)) {
             msgErro = msgErro != null ? "\n" + msgErro.trim() : "";
             throw new IllegalArgumentException(String.format("%s inválido: [%s]%s", atributo, valor, msgErro));
         }
