@@ -5,14 +5,14 @@ Este software foi desenvolvido por Kleber Kruger a fins de ensino. Foram utiliza
 além do framework Compose Multiplatform UI, usado no desenvolvimento de aplicações multiplataformas.
 
 
----- Arquitetura do Projeto ----
+Arquitetura do Projeto
 
 A arquitetura deste software foi baseada em conceitos de MVVM + Clean Architecture. No entanto, trata-se de uma versão
 simplificada de ambas as arquiteturas. Mais detalhes sobre o desenvolvimento deste software pode ser acompanhado na
 disciplina de Linguagens de Programação Orientada a Objetos, do curso de Sistemas de Informação, CPCX-UFMS.
 
 
----- Resumo das Funcionalidades ----
+Resumo das Funcionalidades
 
 O usuário deste sistema pode:
 
@@ -35,7 +35,7 @@ Observações:
    foram pré-cadastradas na base de dados do programa.
 
 
----- Modelagem e Especificações do Projeto ----
+Modelagem e Especificações do Projeto
 
 - Há dois tipos de usuário: Pessoa Física ou Pessoa Jurídica;
 - Uma Pessoa Física contém ao menos as seguintes informações obrigatórias: nome, cpf, telefone, email, e
@@ -55,7 +55,7 @@ Observações:
   banco de dados (local ou remoto), ou via web service.
 
 
----- Dúvidas ----
+Dúvidas
 
 Em caso de dúvidas sobre as especificações do projeto ou de sua implementação, mande um email para:
 kleberkruger@gmail.com.br

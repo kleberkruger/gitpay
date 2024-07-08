@@ -1,4 +1,4 @@
-package br.ufms.gitpay.domain.model;
+package br.ufms.gitpay.domain.model.banco;
 
 import br.ufms.gitpay.domain.util.Validar;
 

@@ -71,6 +71,10 @@ class ValidadorString extends Validador<String, ValidadorString> {
         return this;
     }
 
+    public ValidadorString validarTamanho(int tam) {
+        return validarTamanho(tam, tam);
+    }
+
     public ValidadorString validarTamanho(int min, int max) {
         int len = getValor().length();
         if ((obrigatorio || len > 0) && (len < min || len > max)) {

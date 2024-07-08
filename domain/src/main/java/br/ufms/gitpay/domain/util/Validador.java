@@ -16,9 +16,7 @@ class Validador<T, V extends Validador<T, V>> {
     }
 
     Validador(String campo, T valor, boolean obrigatorio) {
-        Objects.requireNonNull(campo, "Nome do campo nulo");
-
-        this.campo = campo;
+        this.campo = Objects.requireNonNull(campo, "Nome do campo nulo");
         this.valor = valor;
         this.obrigatorio = obrigatorio;
     }

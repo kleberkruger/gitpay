@@ -1,15 +1,17 @@
 [versions]
-jdk               = "21"
-kotlin            = "2.0.0"
-compose           = "1.6.11"
-junit             = "5.10.2"
-slf4j             = "2.0.13"
-firebase_admin    = "9.3.0"
-google_api_client = "2.6.0"
+jdk                     = "21"
+kotlin                  = "2.0.0"
+compose                 = "1.6.11"
+junit                   = "5.10.3"
+slf4j                   = "2.0.13"
+firebase_admin          = "9.3.0"
+google_api_client       = "2.6.0"
 
 [libraries]
-junit_bom         = { module = "org.junit:junit-bom", version.ref = "junit" }
-junit_jupiter     = { module = "org.junit.jupiter:junit-jupiter" }
-slf4j             = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
-firebase_admin    = { module = "com.google.firebase:firebase-admin", version.ref = "firebase_admin" }
-google_api_client = { module = "com.google.api-client:google-api-client", version.ref = "google_api_client" }
+junit_bom               = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit_jupiter           = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit_platform_launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+slf4j                   = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+firebase_admin          = { module = "com.google.firebase:firebase-admin", version.ref = "firebase_admin" }
+google_api_client       = { module = "com.google.api-client:google-api-client", version.ref = "google_api_client" }

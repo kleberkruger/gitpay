@@ -1,6 +1,12 @@
 package br.ufms.gitpay.domain.util;
 
+import br.ufms.gitpay.domain.model.conta.NumeroConta;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Function;
 
 public class Validar {
 
@@ -71,7 +77,7 @@ public class Validar {
     public static String razaoSocial(String razaoSocial, boolean obrigatorio) {
         return new ValidadorString("Razão social", razaoSocial, obrigatorio)
                 .validarNulo()
-                .validarTamanho(3, 50)
+                .validarTamanho(3, 80)
                 .validarPorExpressao(".*[\\p{L}].*", "Informe ao menos uma letra")
                 .getValor(ValidadorString::removerEspacosAdicionais);
     }
@@ -202,10 +208,40 @@ public class Validar {
      * @throws IllegalArgumentException caso a data de nascimento seja inválida
      */
     public static LocalDate dataNascimento(LocalDate data, boolean obrigatorio) {
-        return new Validador<>("Data de nascimento", data, obrigatorio)
-                .validar(valor -> valor.ifPresent(date -> {
-                    if (date.isAfter(LocalDate.now()) || date.isBefore(LocalDate.now().minusYears(150))) {
-                        throw new IllegalArgumentException("Data de nascimento inválida");
+        return estaEntrePeriodo("Data de nascimento", LocalDateTime.now().minusYears(150), data.atStartOfDay(),
+                LocalDateTime.now(), obrigatorio).toLocalDate();
+    }
+
+    /**
+     * Valida se uma data e hora está entre um determinado período
+     *
+     * @param campo           Nome do campo
+     * @param dataHoraInicial data e hora inicial
+     * @param dataHora        data e hora a ser validada
+     * @param dataHoraFinal   data e hora final
+     * @return a data e hora validada
+     */
+    public static LocalDateTime estaEntrePeriodo(String campo, LocalDateTime dataHoraInicial, LocalDateTime dataHora,
+                                                 LocalDateTime dataHoraFinal) {
+        return estaEntrePeriodo(campo, dataHoraInicial, dataHora, dataHoraFinal, true);
+    }
+
+    /**
+     * Valida se uma data e hora está entre um determinado período
+     *
+     * @param campo           Nome do campo
+     * @param dataHoraInicial data e hora inicial
+     * @param dataHora        data e hora a ser validada
+     * @param dataHoraFinal   data e hora final
+     * @param obrigatorio     verdadeiro caso o campo seja obrigatório
+     * @return a data e hora validada
+     */
+    public static LocalDateTime estaEntrePeriodo(String campo, LocalDateTime dataHoraInicial, LocalDateTime dataHora,
+                                                 LocalDateTime dataHoraFinal, boolean obrigatorio) {
+        return new Validador<>(Objects.requireNonNull(campo, "Nome do campo nulo"), dataHora, obrigatorio)
+                .validar((attr, date) -> date.ifPresent(d -> {
+                    if (d.isAfter(dataHoraFinal) || d.isBefore(dataHoraInicial)) {
+                        throw new IllegalArgumentException(attr + " inválida");
                     }
                 })).getValor();
     }
@@ -226,6 +262,10 @@ public class Validar {
     }
 
     private static void validarCPF(String cpf) {
+        if (cpf.matches("^(\\d)\\1*$")) {
+            throw new IllegalArgumentException("CPF inválido: " + cpf);
+        }
+
         int[] digitos = cpf.chars().map(Character::getNumericValue).toArray();
 
         int soma = 0;
@@ -269,6 +309,10 @@ public class Validar {
     }
 
     private static void validarCNPJ(String cnpj) {
+        if (cnpj.matches("^(\\d)\\1*$")) {
+            throw new IllegalArgumentException("CNPJ inválido: " + cnpj);
+        }
+
         int[] digitos = cnpj.chars().map(Character::getNumericValue).toArray();
 
         int soma = 0;
@@ -298,6 +342,38 @@ public class Validar {
         }
     }
 
+    public static String chaveAleatoriaPix(String chave) {
+        return new ValidadorString("Chave Pix", chave)
+                .validarNulo()
+                .validarPorExpressao("^[a-zA-Z0-9]$")
+                .validarTamanho(32)
+                .getValor();
+    }
+
+    /**
+     * Valida o formato de uma chave pix
+     *
+     * @param chave chave pix
+     * @return a chave pix validada
+     */
+    public static String chavePix(String chave) {
+        String regex = new StringBuilder()
+                .append("\\d{11}|\\d{14}|")                                     // CPF e CNPJ
+                .append("\\d{2}[1-8]\\d{7}|")                                   // Telefone: ##########
+                .append("\\d{2}9\\d{8}|")                                       // Telefone: ##9########
+                .append("\\+55\\d{2}[1-8]\\d{7}|")                              // Telefone: +55##########
+                .append("\\+55\\d{2}9\\d{8}|")                                  // Telefone: +55##9########
+                .append("^\\+(?!55)\\d{2}\\d{6,}$|")                            // Telefone internacional: +########
+                .append("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$|")  // Email
+                .append("^[a-zA-Z0-9]{32}$")                                    // Aleatória
+                .toString();
+
+        return new ValidadorString("Chave Pix", chave)
+                .validarNulo()
+                .validarPorExpressao(regex)
+                .getValor();
+    }
+
     /**
      * Valida o código do banco.
      *
@@ -324,5 +400,74 @@ public class Validar {
                 .validarNulo()
                 .validarPorExpressao("^[+-]?\\d+$")
                 .getValor()));
+    }
+
+    /**
+     * Valida o número da agência
+     *
+     * @param numero número da agência
+     * @return o número da agência
+     */
+    public static int numeroAgencia(int numero) {
+        if (numero < 1 || numero > 99999) {
+            throw new IllegalArgumentException("Número de agência inválido: [" + numero + "]");
+        }
+        return numero;
+    }
+
+    /**
+     * Valida o número da conta
+     *
+     * @param numeroDigito número da conta com dígito
+     * @return o número da conta com dígito
+     */
+    public static String numeroConta(String numeroDigito) {
+        return numeroConta(numeroDigito, null);
+    }
+
+    /**
+     * Valida o número da conta
+     *
+     * @param numeroDigito número da conta com dígito
+     * @param verificador  função de verificação
+     * @return o número da conta com dígito
+     */
+    public static String numeroConta(String numeroDigito, Function<Integer, Integer> verificador) {
+        return new ValidadorString("Número da conta", numeroDigito)
+                .validarNulo()
+                .validarPorExpressao("\\d+-\\d")
+                .validarValor(valor -> {
+                    int[] num = Arrays.stream(valor.split("-")).mapToInt(Integer::parseInt).toArray();
+                    numeroConta(num[0], num[1], verificador);
+                }).getValor();
+    }
+
+    /**
+     * Valida o número da conta
+     *
+     * @param numero número
+     * @param digito dígito
+     * @return o número da conta com dígito
+     */
+    public static String numeroConta(int numero, int digito) {
+        return numeroConta(numero, digito, null);
+    }
+
+    /**
+     * Valida o número da conta
+     *
+     * @param numero      número
+     * @param digito      dígito
+     * @param verificador função de verificação de dígito
+     * @return o número da conta com dígito
+     */
+    public static String numeroConta(int numero, int digito, Function<Integer, Integer> verificador) {
+        String numeroDigito = NumeroConta.formatar(numero, digito);
+        if (numero < 1 || numero > 99999999) {
+            throw new IllegalArgumentException("Número inválido: [" + numeroDigito + "]");
+        } else if ((digito < 0 || digito > 9) || (verificador != null && verificador.apply(numero) != digito)) {
+            throw new IllegalArgumentException("Dígito inválido: [" + numeroDigito + "]");
+        }
+        return numeroDigito;
     }
 }
