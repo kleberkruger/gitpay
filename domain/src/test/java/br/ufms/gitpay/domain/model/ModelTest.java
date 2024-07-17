@@ -72,6 +72,12 @@ public class ModelTest {
 
     @Test
     public void testarBanco() {
+        testarEntradaInvalida(() -> new Banco(null, "", ""));
+        testarEntradaInvalida(() -> new Banco("", "GitPay", "GitPay Pagamentos S.I."));
+        testarEntradaInvalida(() -> new Banco("abc", "GitPay", "GitPay Pagamentos S.I."));
+        testarEntradaInvalida(() -> new Banco("k10", "GitPay", "GitPay Pagamentos S.I."));
+
+        testarEntradaValida(() -> new Banco("666", "GitPay", "GitPay Pagamentos S.I."));
         testarEntradaValida(() -> new Banco(666, "GitPay", "GitPay Pagamentos S.I."));
     }
 

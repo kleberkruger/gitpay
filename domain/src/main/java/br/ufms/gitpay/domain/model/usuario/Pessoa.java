@@ -8,8 +8,26 @@ public abstract class Pessoa {
     private String telefone;
     private String email;
 
+    /**
+     * Cria um objeto Pessoa
+     *
+     * @param nome nome da pessoa física ou jurídica
+     */
     protected Pessoa(String nome) {
         this.setNome(nome);
+    }
+
+    /**
+     * Cria um objeto Pessoa
+     *
+     * @param nome     nome da pessoa física ou jurídica
+     * @param telefone telefone
+     * @param email    email
+     */
+    protected Pessoa(String nome, String telefone, String email) {
+        this.setNome(nome);
+        this.setTelefone(telefone);
+        this.setEmail(email);
     }
 
     /**
