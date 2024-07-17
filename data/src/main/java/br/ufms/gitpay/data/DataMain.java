@@ -3,9 +3,6 @@ package br.ufms.gitpay.data;
 import br.ufms.gitpay.data.file.BancoFileRepository;
 import br.ufms.gitpay.domain.model.banco.Banco;
 
-import java.util.Collection;
-import java.util.function.Consumer;
-
 public class DataMain {
 
     public static void main(String[] args) {
@@ -19,6 +16,5 @@ public class DataMain {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-
     }
 }
