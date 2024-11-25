@@ -62,6 +62,7 @@ public abstract class FileRepository<Entity, Id extends Serializable> implements
     @Override
     public CompletableFuture<Entity> save(Entity entity) {
         repository.put(getId(entity), entity);
+        save();
         return CompletableFuture.completedFuture(entity);
     }
 

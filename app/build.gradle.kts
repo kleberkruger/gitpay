@@ -2,8 +2,8 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm").version(libs.versions.kotlin)
-    id("org.jetbrains.compose").version(libs.versions.compose)
-    id("org.jetbrains.kotlin.plugin.compose").version(libs.versions.kotlin)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {

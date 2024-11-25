@@ -7,6 +7,8 @@ public class DataMain {
 
     public static void main(String[] args) {
         try (var bancoRepository = new BancoFileRepository()) {
+            Banco b = new Banco("07", "Kleber Banco", "Kleber S.A.");
+            System.out.println(b.getCodigo());
             bancoRepository.save(Banco.GitPay);
             bancoRepository.getAll().thenAccept(bancos -> {
                 for (Banco banco : bancos) {
