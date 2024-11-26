@@ -1,0 +1,19 @@
+server:
+  servlet:
+    context-path: /gitpay
+spring:
+  application:
+    name: GitPay
+  config:
+    import: classpath:data.yaml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gitpay
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate.format_sql: false

@@ -15,8 +15,8 @@ public record DadosConta(TipoConta tipo, String banco, int agencia, NumeroConta 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DadosConta that)) return false;
-        return agencia == that.agencia && banco.equals(that.banco) && tipo == that.tipo && numero.equals(that.numero);
+        if (!(o instanceof DadosConta(TipoConta t, String bc, int ag, NumeroConta c))) return false;
+        return agencia == ag && banco.equals(bc) && tipo == t && numero.equals(c);
     }
 
     @Override

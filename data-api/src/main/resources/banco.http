@@ -1,0 +1,23 @@
+###
+POST localhost:8080/gitpay/banco
+Content-Type: application/json
+
+{
+  "codigo": "666",
+  "nome": "GitPay",
+  "razaoSocial": "GitPay S.A."
+}
+
+###
+POST localhost:8080/gitpay/banco
+Content-Type: application/json
+
+{
+"codigo": "001",
+"nome": "Banco do Brasil",
+"razaoSocial": "Banco do Brasil S.A."
+}
+
+###
+GET localhost:8080/gitpay/banco
+Content-Type: application/json

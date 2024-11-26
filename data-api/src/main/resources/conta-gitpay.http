@@ -1,0 +1,71 @@
+### Salva uma conta GitPay pessoa física
+POST localhost:8080/gitpay/conta/666
+Content-Type: application/json
+
+{
+  "numero": 1,
+  "digito": 9,
+  "saldo": 0.00,
+  "limite": 1000.00,
+  "titular": {
+    "nome": "Kleber Kruguer",
+    "cpf": "02135730165",
+    "telefone": "67996122809",
+    "email": "kleberkruger@gmail.com",
+    "dataNascimento": "1988-12-08",
+    "senha": "123",
+    "tipo": "PESSOA_FISICA"
+  }
+}
+
+### Atualiza uma conta GitPay pessoa física
+PUT localhost:8080/gitpay/conta/666
+Content-Type: application/json
+
+{
+  "numero": 1,
+  "digito": 9,
+  "saldo": 0.00,
+  "limite": 1000.00,
+  "titular": {
+    "nome": "Kleber Kruguer",
+    "cpf": "02135730165",
+    "telefone": "67996122809",
+    "email": "kleberkruger@gmail.com",
+    "dataNascimento": "1988-12-08",
+    "senha": "123",
+    "tipo": "PESSOA_FISICA"
+  }
+}
+
+### Salva uma conta GitPay pessoa jurídica
+POST localhost:8080/gitpay/conta/666
+Content-Type: application/json
+
+{
+  "numero": 2,
+  "digito": 8,
+  "saldo": 0.00,
+  "limite": 100000.00,
+  "titular": {
+    "nome": "UFMS",
+    "razaoSocial": "Universidade Federal de Mato Grosso do Sul",
+    "cnpj": "15461510000133",
+    "telefone": "6733457000",
+    "email": "reitoria@ufms.com",
+    "senha": "123",
+    "tipo": "PESSOA_JURIDICA"
+  }
+}
+
+### Busca uma conta GitPay
+GET localhost:8080/gitpay/conta/666/1
+Content-Type: application/json
+
+### Lista todas as contas GitPay ---[OPCIONAL]
+GET localhost:8080/gitpay/conta/666
+Content-Type: application/json
+
+### Exclui uma conta GitPay
+DELETE localhost:8080/gitpay/conta/666/1
+Content-Type: application/json

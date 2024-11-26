@@ -1,0 +1,93 @@
+### Salva uma conta pessoa física no Banco do Brasil ---[RETIRAR]
+POST localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+  "banco": "001",
+  "agencia": 552,
+  "numero": 16942,
+  "digito": 0,
+  "tipoConta": "CONTA_CORRENTE",
+  "nomeTitular": "Kleber Kruguer",
+  "docTitular": "02135730165",
+  "tipoPessoa": "PESSOA_FISICA"
+}
+
+### Atualiza uma conta externa ---[RETIRAR]
+PUT localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+"banco": "001",
+"agencia": 552,
+"numero": 16942,
+"digito": 0,
+"tipoConta": "CONTA_CORRENTE",
+"nomeTitular": "Kleber Kruger",
+"docTitular": "02135730165",
+"tipoPessoa": "PESSOA_FISICA"
+}
+
+### Salva uma conta pessoa física na Caixa Econômica Federal ---[RETIRAR]
+POST localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+  "banco": "100",
+  "agencia": 1107,
+  "numero": 25701,
+  "digito": 2,
+  "tipoConta": "CONTA_POUPANCA",
+  "nomeTitular": "Kleber Kruger",
+  "docTitular": "02135730165",
+  "tipoPessoa": "PESSOA_FISICA"
+}
+
+### Salva uma conta pessoa jurídica no Banco do Brasil ---[RETIRAR]
+POST localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+  "banco": "001",
+  "agencia": 4421,
+  "numero": 99999,
+  "digito": 9,
+  "tipoConta": "CONTA_CORRENTE",
+  "nomeTitular": "Universidade Federal de Mato Grosso do Sul",
+  "docTitular": "15461510000133",
+  "tipoPessoa": "PESSOA_JURIDICA"
+}
+
+### Lista todas as contas ---[RETIRAR]
+GET localhost:8080/gitpay/conta
+Content-Type: application/json
+
+### Busca uma conta
+GET localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+  "banco": "100",
+  "agencia": 1107,
+  "numero": 25701,
+  "tipoConta": "CONTA_CORRENTE"
+}
+
+### Lista todas as contas do Banco do Brasil ---[RETIRAR]
+GET localhost:8080/gitpay/conta/001
+Content-Type: application/json
+
+### Lista todas as contas da Caixa Econômica Federal ---[RETIRAR]
+GET localhost:8080/gitpay/conta/100
+Content-Type: application/json
+
+### Deleta uma conta do Banco do Brasil ---[RETIRAR]
+DELETE localhost:8080/gitpay/conta
+Content-Type: application/json
+
+{
+  "banco": "100",
+  "agencia": 1107,
+  "numero": 25701,
+  "tipoConta": "CONTA_CORRENTE"
+}

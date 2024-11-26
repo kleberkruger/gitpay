@@ -6,10 +6,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-kotlin {
-    jvmToolchain(libs.versions.jdk.get().toInt())
-}
-
 repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
